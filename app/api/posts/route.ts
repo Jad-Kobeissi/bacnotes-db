@@ -1,6 +1,7 @@
 import { TJWT } from "@/app/types";
 import { prisma } from "@/lib/prisma";
 import { decode, verify } from "jsonwebtoken";
+import { isEmpty } from "../isEmpty";
 
 export async function GET(req: Request) {
   try {
@@ -20,6 +21,9 @@ export async function GET(req: Request) {
           none: {
             id: decoded.id,
           },
+        },
+        author: {
+          class: decoded.class,
         },
       },
       include: {
@@ -62,6 +66,8 @@ export async function POST(req: Request) {
 
     const { title, content } = await req.json();
 
+    if (!title || !content || isEmpty([title, content]))
+      return new Response("Please fill missing fields", { status: 404 });
     const post = await prisma.post.create({
       data: {
         title,

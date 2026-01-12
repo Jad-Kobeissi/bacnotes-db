@@ -6,6 +6,7 @@
 :root {
   --brand: #2b76f0;
   --secondary-text: #797b81;
+  --seperator-color: #d3d3d3;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -84,9 +85,11 @@
 }
 
 .button {
-  @apply bg-(--brand) text-background px-6 py-1 rounded-md border border-(--brand) hover:bg-transparent active:bg-transparent hover:text-(--brand) active:text-(--brand) transition-all duration-200;
+  @apply bg-(--brand) text-background px-6 py-1 rounded-md border border-(--brand) hover:bg-transparent active:bg-transparent hover:text-(--brand) active:text-(--brand) transition-all duration-200 focus:bg-transparent focus:text-(--brand);
 }
-
+.input {
+  @apply border shadow-md px-4 py-1 rounded-md;
+}
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

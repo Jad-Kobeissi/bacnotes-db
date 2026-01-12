@@ -29,11 +29,15 @@ export async function POST(req: Request) {
       },
       include: {
         posts: true,
+        followers: true,
+        following: true,
+        likedPosts: true,
+        viewedPosts: true,
       },
     });
 
     const token = await sign(
-      { id: user.id, username: user.username, name },
+      { id: user.id, username: user.username, name, class: user.class },
       process.env.JWT_SECRET as string
     );
 

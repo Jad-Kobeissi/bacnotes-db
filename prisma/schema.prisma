@@ -18,6 +18,8 @@ model User {
   username     String   @unique
   name      String?
   class String
+  followers User[]   @relation("UserFollowers")
+  following User[]   @relation("UserFollowers")
   posts Post[]
   viewedPosts Post[]   @relation("ViewedPosts")
   likedPosts Post[]   @relation("LikedPosts")

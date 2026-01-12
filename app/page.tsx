@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 function Nav() {
   const router = useRouter();
   return (
-    <nav className="flex justify-between items-center p-2 bg-transparent backdrop-blur-sm w-screen fixed top-0 z-10 rounded-md px-4">
+    <nav className="flex justify-between items-center p-2 bg-transparent backdrop-blur-sm w-screen fixed top-0 z-10 rounded-md px-8">
       <h1 className="text-[1.2rem] font-semibold">BacNotes</h1>
       <div className="flex gap-6">
         <motion.button

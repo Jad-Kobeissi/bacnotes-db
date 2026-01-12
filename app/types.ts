@@ -2,6 +2,7 @@ export interface TJWT {
   id: string;
   username: string;
   name: string;
+  class: string;
 }
 
 export interface TUser {
@@ -9,6 +10,8 @@ export interface TUser {
   username: string;
   name: string | null;
   class: string;
+  followers: TUser[];
+  following: TUser[];
   posts: TPost[];
   viewedPosts: TPost[];
   likedPosts: TPost[];

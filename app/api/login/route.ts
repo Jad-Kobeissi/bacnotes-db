@@ -28,14 +28,18 @@ export async function POST(req: Request) {
         username,
       },
       include: {
+        followers: true,
+        following: true,
+        likedPosts: true,
         posts: true,
+        viewedPosts: true,
       },
     });
 
     if (!user) return new Response("Invalid credentials", { status: 401 });
 
     const customToken = await sign(
-      { id: user.id, username, name: user.name },
+      { id: user.id, username, name: user.name, class: user.class },
       process.env.JWT_SECRET!
     );
 
