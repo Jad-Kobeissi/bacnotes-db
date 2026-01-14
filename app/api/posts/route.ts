@@ -17,13 +17,13 @@ export async function GET(req: Request) {
         authorId: {
           not: decoded.id,
         },
+        author: {
+          class: decoded.class,
+        },
         viewedUsers: {
           none: {
             id: decoded.id,
           },
-        },
-        author: {
-          class: decoded.class,
         },
       },
       include: {

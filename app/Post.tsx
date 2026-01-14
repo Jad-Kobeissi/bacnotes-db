@@ -4,16 +4,22 @@ import { useEffect, useOptimistic, useState } from "react";
 import { useUser } from "./contexts/UserContext";
 import axios from "axios";
 import { getCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
+import { get } from "http";
 
 export default function Post({ post }: { post: TPost }) {
   const [likes, setLikes] = useState(post.likes);
   const [liked, setLiked] = useState(false);
-  const { user } = useUser();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const { user, setUser } = useUser();
+  const router = useRouter();
   useEffect(() => {
     if (!user) return;
     if (!post) return;
     setLiked(post.likedUsers.some((u) => u.id === user.id));
     setLikes(post.likes);
+
+    setIsFollowing(user.following.some((u) => u.id === post.author.id));
   }, [user, post]);
   return (
     <motion.div
@@ -21,8 +27,76 @@ export default function Post({ post }: { post: TPost }) {
       whileTap={{ scale: 0.9 }}
       key={post.id}
       className="border w-3/4 px-4 py-2"
+      onClick={() => router.push(`/post/${post.id}`)}
     >
-      <h1 className="capitalize text-[.95rem] underline">{post.author.name}</h1>
+      <div className="flex gap-2 items-center">
+        <h1 className="capitalize text-[1.1rem] underline">
+          {post.author.name}
+        </h1>
+        {isFollowing ? (
+          <button
+            className="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFollowing(false);
+              axios
+                .post(
+                  `/api/user/unfollow/${post.author.id}`,
+                  {},
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getCookie("token")}`,
+                    },
+                  }
+                )
+                .then((res) => {
+                  setUser(res.data.newUser);
+                  sessionStorage.setItem(
+                    "user",
+                    JSON.stringify(res.data.newUser)
+                  );
+                })
+                .catch((err) => {
+                  setIsFollowing(true);
+                  alert("Error unfollowing user: " + err.response.data);
+                });
+            }}
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            className="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFollowing(true);
+              axios
+                .post(
+                  `/api/user/follow/${post.author.id}`,
+                  {},
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getCookie("token")}`,
+                    },
+                  }
+                )
+                .then((res) => {
+                  setUser(res.data.newUser);
+                  sessionStorage.setItem(
+                    "user",
+                    JSON.stringify(res.data.newUser)
+                  );
+                })
+                .catch((err) => {
+                  setIsFollowing(false);
+                  alert("Error following user: " + err.response.data);
+                });
+            }}
+          >
+            Follow
+          </button>
+        )}
+      </div>
       <h1 className="text-[1.2rem] font-medium">{post.title}</h1>
       <p className="text-(--secondary-text)">{post.content}</p>
       <div className="flex items-center gap-2">
