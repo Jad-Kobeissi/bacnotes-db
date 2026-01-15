@@ -32,6 +32,7 @@ model Post {
   content   String?
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
+  imageUrls String[]
   viewedUsers User[]   @relation("ViewedPosts")
   likedUsers User[]   @relation("LikedPosts")
   likes Int @default(0)

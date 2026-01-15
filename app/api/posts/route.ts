@@ -2,6 +2,8 @@ import { TJWT } from "@/app/types";
 import { prisma } from "@/lib/prisma";
 import { decode, verify } from "jsonwebtoken";
 import { isEmpty } from "../isEmpty";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 
 export async function GET(req: Request) {
   try {
@@ -64,8 +66,25 @@ export async function POST(req: Request) {
 
     const decoded = decode(authHeader) as TJWT;
 
-    const { title, content } = await req.json();
+    const formData = await req.formData();
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const files = formData.getAll("files");
 
+    let fileUrls: string[] = [];
+    if (Array.from(files).length > 0) {
+      fileUrls = await Promise.all(
+        files.map(async (file) => {
+          const imageRef = ref(
+            storage,
+            `${process.env.postsBucket}/${crypto.randomUUID()}`
+          );
+          await uploadBytes(imageRef, file as File);
+
+          return await getDownloadURL(imageRef);
+        })
+      );
+    }
     if (!title || !content || isEmpty([title, content]))
       return new Response("Please fill missing fields", { status: 404 });
     const post = await prisma.post.create({
@@ -73,6 +92,7 @@ export async function POST(req: Request) {
         title,
         content,
         authorId: decoded.id,
+        imageUrls: fileUrls,
       },
     });
 

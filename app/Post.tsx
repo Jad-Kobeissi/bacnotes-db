@@ -1,13 +1,29 @@
 import { motion } from "motion/react";
 import { TPost } from "./types";
-import { useEffect, useOptimistic, useState } from "react";
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+} from "react";
 import { useUser } from "./contexts/UserContext";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { get } from "http";
+import { Button } from "@/components/ui/button";
 
-export default function Post({ post }: { post: TPost }) {
+export default function Post({
+  post,
+  setPosts,
+}: {
+  post: TPost;
+  setPosts?: Dispatch<SetStateAction<TPost[]>>;
+}) {
+  const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(false);
   const [likes, setLikes] = useState(post.likes);
   const [liked, setLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -99,6 +115,20 @@ export default function Post({ post }: { post: TPost }) {
       </div>
       <h1 className="text-[1.2rem] font-medium">{post.title}</h1>
       <p className="text-(--secondary-text)">{post.content}</p>
+      <div className="flex scroll-x overflow-x-auto snap-center snap-mandatory gap-2 my-2 max-w-[650px]">
+        {post.imageUrls.map((url) => (
+          <img
+            src={url}
+            alt="image"
+            key={url}
+            className="max-w-[600px] w-full snap-center snap-mandatory "
+            onClick={(e) => {
+              e.preventDefault();
+              window.open(url, "_blank");
+            }}
+          />
+        ))}
+      </div>
       <div className="flex items-center gap-2">
         <h1>{likes}</h1>
         {liked ? (
@@ -171,6 +201,46 @@ export default function Post({ post }: { post: TPost }) {
           </div>
         )}
       </div>
+      {post.authorId == user?.id && (
+        <div className="flex gap-2">
+          <Button
+            variant={"destructive"}
+            className="font-semibold"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteButtonDisabled(true);
+              axios
+                .delete(`/api/posts/${post.id}`, {
+                  headers: {
+                    Authorization: `Bearer ${getCookie("token")}`,
+                  },
+                })
+                .then((res) => {
+                  if (setPosts) {
+                    setPosts((prev) => prev.filter((p) => p.id !== post.id));
+                  }
+                  alert("Post deleted successfully");
+                })
+                .catch((err) => {
+                  alert("Error deleting post: " + err.response.data);
+                })
+                .finally(() => setDeleteButtonDisabled(false));
+            }}
+            disabled={deleteButtonDisabled}
+          >
+            Delete
+          </Button>
+          <Button
+            className="bg-(--brand) hover:bg-transparent border border-(--brand) hover:text-(--brand) font-semibold active:bg-transparent active:border-(--brand) active:text-(--brand)"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/post/edit/${post.id}`);
+            }}
+          >
+            Edit
+          </Button>
+        </div>
+      )}
     </motion.div>
   );
 }

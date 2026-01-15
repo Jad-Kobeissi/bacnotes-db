@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useUser } from "../contexts/UserContext";
 import Nav from "../Nav";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { TPost } from "../types";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -20,6 +20,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const fetchPosts = async () => {
     axios
       .get(`/api/posts/user/${user?.id}?page=${page}`, {
@@ -84,10 +85,10 @@ export default function Profile() {
           loader={
             <Loading className="flex items-center justify-center mt-30 w-3/4" />
           }
-          className="flex items-center my-30 mx-4"
+          className="flex flex-col gap-4 items-center my-30 w-3/4"
         >
           {posts.map((post) => (
-            <Post post={post} key={post.id} />
+            <Post post={post} key={post.id} setPosts={setPosts} />
           ))}
         </InfiniteScroll>
         {error && <Error error={error} className="mt-30" />}

@@ -24,6 +24,7 @@ export interface TPost {
   content: string | null;
   author: TUser;
   authorId: string;
+  imageUrls: string[];
   viewedUsers: TUser[];
   likedUsers: TUser[];
   likes: number;
