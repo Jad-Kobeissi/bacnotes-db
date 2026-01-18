@@ -17,6 +17,7 @@
         "react-dom": "19.2.3",
         "react-infinite-scroll": "^0.1.5",
         "react-infinite-scroll-component": "^6.1.1",
+        "react-intersection-observer": "^10.0.2",
       },
       "devDependencies": {
         "@tailwindcss/postcss": "^4",
@@ -937,6 +938,8 @@
     "react-infinite-scroll": ["react-infinite-scroll@0.1.5", "", {}, "sha512-5i6ndJNL68I4+Kc6+AxLwGho4TGBKG0cnIKjW2F6kTT8JNCzpYMhe+jCOo9u6yTXzFL5DE2OmmNvxkUIcAtUow=="],
 
     "react-infinite-scroll-component": ["react-infinite-scroll-component@6.1.1", "", { "dependencies": { "throttle-debounce": "^2.1.0" }, "peerDependencies": { "react": ">=16.0.0" } }, "sha512-R8YoOyiNDynSWmfVme5LHslsKrP+/xcRUWR2ies8UgUab9dtyw5ECnMCVPPmnmjjF4MWQmfVdRwRWcWaDgeyMA=="],
+
+    "react-intersection-observer": ["react-intersection-observer@10.0.2", "", { "peerDependencies": { "react": "^17.0.0 || ^18.0.0 || ^19.0.0", "react-dom": "^17.0.0 || ^18.0.0 || ^19.0.0" }, "optionalPeers": ["react-dom"] }, "sha512-lAMzxVWrBko6SLd1jx6l84fVrzJu91hpxHlvD2as2Wec9mDCjdYXwc5xNOFBchpeBir0Y7AGBW+C/AYMa7CSFg=="],
 
     "react-is": ["react-is@16.13.1", "", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 

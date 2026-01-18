@@ -1,4 +1,4 @@
-import { TJWT } from "@/app/types";
+import { TJWT, TPost } from "@/app/types";
 import { prisma } from "@/lib/prisma";
 import { decode, verify } from "jsonwebtoken";
 
@@ -31,7 +31,7 @@ export async function GET(req: Request) {
 
     if (posts.length == 0) return new Response("No new posts", { status: 404 });
 
-    await posts.forEach(async (post) => {
+    await posts.forEach(async (post: TPost) => {
       await prisma.post.update({
         where: {
           id: post.id,

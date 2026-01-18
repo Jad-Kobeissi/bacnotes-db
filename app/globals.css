@@ -5,6 +5,7 @@
   --foreground: #171717;
   --brand: #2b76f0;
   --secondary-text: #797b81;
+  --border-color: #E5E7EB;
 }
 
 @theme inline {
