@@ -1,4 +1,5 @@
 "use client";
+import Loading from "@/app/LoadingComp";
 import axios from "axios";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
@@ -15,12 +16,11 @@ export default function SecondStage() {
     setLearners(JSON.parse(getCookie("children") as string) || []);
   }, []);
   return loading ? (
-    <p>loading...</p>
+    <Loading className="flex items-center justify-center h-screen" />
   ) : (
     <>
-      <h1 className="text-[1.3rem]">Stage 2</h1>
       <form
-        className="flex flex-col gap-2 items-center justify-center"
+        className="flex flex-col gap-2 items-center justify-center h-screen"
         onSubmit={(e) => {
           e.preventDefault();
           setLoadnig(true);
@@ -34,7 +34,6 @@ export default function SecondStage() {
             })
             .then((res) => {
               setCookie("token", res.data.token);
-              alert("Signed Up");
               deleteCookie("children");
               router.push("/home");
             })
@@ -44,24 +43,31 @@ export default function SecondStage() {
             });
         }}
       >
+        <h1 className="text-[2rem] font-semibold">Stage 2</h1>
         {error && <p className="text-red-500">{error}</p>}
         <div className="flex flex-col gap-2">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username" className="text-[1.2rem]">
+            Username
+          </label>
           <input
             type="text"
             id="username"
             placeholder="Username"
             onChange={(e) => setUsername(e.target.value)}
+            className="input"
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="child-select">Who are you?</label>
+          <label className="text-[1.2rem]" htmlFor="child-select">
+            Who are you?
+          </label>
           <select
             id="child-select"
             onChange={(e) => {
               setSelectedLearner(e.target.value);
               console.log(e.target.value);
             }}
+            className="input"
           >
             <option value="">Pick a child</option>
             {learners.map((learner, index) => (

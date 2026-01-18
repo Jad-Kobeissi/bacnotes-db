@@ -30,12 +30,10 @@ export default function Login() {
             .then((res) => {
               setCookie("tokenBAC", res.data.token);
               setCookie("token", res.data.customToken);
-              alert("User logged in");
               setUser(res.data.user);
               router.push("/home");
             })
             .catch((err) => {
-              alert("Error");
               setError(err.response.data);
               setLoading(false);
               console.log(err);
