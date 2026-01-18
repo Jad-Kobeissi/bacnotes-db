@@ -8,7 +8,7 @@ export default function Nav() {
         <Link href={"/home"}>Home</Link>
         <Link href={"/notes"}>Notes</Link>
         <Link href={"/profile"}>Profile</Link>
-        <Link href={"/logout"}>LogOut</Link>
+        <button>LogOut</button>
       </div>
     </nav>
   );

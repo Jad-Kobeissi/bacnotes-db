@@ -5,7 +5,7 @@
   --foreground: #171717;
   --brand: #2b76f0;
   --secondary-text: #797b81;
-  --border-color: #E5E7EB;
+  --border-color: #e5e7eb;
 }
 
 @theme inline {
@@ -30,4 +30,7 @@ body {
 
 .button {
   @apply bg-(--brand) text-background px-6 py-1 rounded-md border border-(--brand) hover:bg-transparent active:bg-transparent hover:text-(--brand) active:text-(--brand) transition-all duration-200;
+}
+.input {
+  @apply border border-(--border-color) px-4 py-1 rounded-md;
 }

@@ -8,7 +8,7 @@ function Nav() {
   return (
     <nav className="flex justify-between fixed top-0 left-0 w-screen items-center px-3 py-1">
       <h1 className="text-[1.2rem] font-semibold">BACConnect</h1>
-      <div>
+      <div className="flex gap-3">
         <button
           onClick={() => router.push(`/login`)}
           className="border border-(--border-color) text-[#1c1b2a] rounded-md py-1 px-4 font-medium"
@@ -29,7 +29,11 @@ function Home() {
   const router = useRouter();
   return (
     <div className="text-center my-30 flex flex-col gap-20 px-2" id="home">
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <div className="flex items-center justify-center flex-col w-full">
           <h1 className="text-[2.5rem] sm:text-[3rem] font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent overflow-hidden leading-[1.5em]">
             Your School Social Hub for Academic Success
@@ -60,20 +64,24 @@ function Home() {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="border border-(--secondary-text) rounded-md px-10 py-1 text-[1rem] font-bold max-[600px]:w-[75%]"
+            className="border border-(--border-color) rounded-md px-10 py-1 text-[1rem] font-bold max-[600px]:w-[75%]"
             onClick={() => router.push(`/login`)}
           >
             SignIn
           </motion.button>
         </div>
-      </div>
-      <div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
         <img
           src="/hero-background.jpeg"
           className="rounded-lg mx-auto max-w-200 w-5/6 shadow-xl"
           alt="Hero Image"
         />
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -183,7 +191,7 @@ function Features() {
           collaboration
         </p>
       </div>
-      <div className="flex items-center justify-center flex-wrap gap-4">
+      <div className="flex justify-center flex-wrap gap-4">
         {cards.map((card, index) => (
           <Card
             key={index}
