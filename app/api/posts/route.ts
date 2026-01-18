@@ -1,5 +1,7 @@
 import { TJWT, TPost } from "@/app/types";
+import { storage } from "@/lib/firebase";
 import { prisma } from "@/lib/prisma";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { decode, verify } from "jsonwebtoken";
 
 export async function GET(req: Request) {
@@ -31,20 +33,22 @@ export async function GET(req: Request) {
 
     if (posts.length == 0) return new Response("No new posts", { status: 404 });
 
-    await posts.forEach(async (post: TPost) => {
-      await prisma.post.update({
-        where: {
-          id: post.id,
-        },
-        data: {
-          viewedUsers: {
-            connect: {
-              id: decoded.id,
+    await Promise.all(
+      posts.map((post) => {
+        return prisma.post.update({
+          where: {
+            id: post.id,
+          },
+          data: {
+            viewedUsers: {
+              connect: {
+                id: decoded.id,
+              },
             },
           },
-        },
-      });
-    });
+        });
+      }),
+    );
 
     return Response.json(posts);
   } catch (error: any) {
@@ -60,13 +64,46 @@ export async function POST(req: Request) {
 
     const decoded = decode(authHeader) as TJWT;
 
-    const { title, content } = await req.json();
+    // Verify user exists in database
+    const userExists = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
+
+    if (!userExists) {
+      return new Response("User not found. Please log in again.", {
+        status: 404,
+      });
+    }
+
+    const formData = await req.formData();
+
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const files = formData.getAll("files") as File[];
+
+    // Upload files first in parallel
+    const imageUrls = await Promise.all(
+      files.map(async (file) => {
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error("Image too large");
+        }
+
+        const imageRef = ref(
+          storage,
+          `${process.env.postsBucket}/${crypto.randomUUID()}`,
+        );
+
+        await uploadBytes(imageRef, file);
+        return await getDownloadURL(imageRef);
+      }),
+    );
 
     const post = await prisma.post.create({
       data: {
         title,
         content,
         authorId: decoded.id,
+        imageUrls,
       },
     });
 

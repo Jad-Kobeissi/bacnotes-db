@@ -33,6 +33,7 @@ model Post {
   viewedUsers User[]   @relation("ViewedPosts")
   likedUsers User[]   @relation("LikedPosts")
   likes Int @default(0)
+  imageUrls String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

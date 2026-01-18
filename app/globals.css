@@ -29,7 +29,7 @@ body {
 }
 
 .button {
-  @apply bg-(--brand) text-background px-6 py-1 rounded-md border border-(--brand) hover:bg-transparent active:bg-transparent hover:text-(--brand) active:text-(--brand) transition-all duration-200;
+  @apply disabled:bg-[#cccccc] disabled:border-0 bg-(--brand) text-background px-6 py-1 rounded-md border border-(--brand) hover:bg-transparent active:bg-transparent hover:text-(--brand) active:text-(--brand) transition-all duration-200;
 }
 .input {
   @apply border border-(--border-color) px-4 py-1 rounded-md;
