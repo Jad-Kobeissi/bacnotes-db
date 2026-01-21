@@ -147,7 +147,7 @@ export default function Home() {
             />
           </label>
           <button disabled={postButtonDisabled} className="button">
-            Post (80 - 100s)
+            Post
           </button>
         </form>
         <InfiniteScroll

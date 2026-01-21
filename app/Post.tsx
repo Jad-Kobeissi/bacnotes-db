@@ -42,28 +42,39 @@ export default function Post({
         ))}
       </div>
       {post.authorId == user?.id && (
-        <button
-          className="bg-red-500 text-white px-6 py-1 font-semibold rounded-md my-5 border border-red-500 hover:bg-transparent hover:text-red-500 transition-all duration-200 active:bg-transparent active:text-red-500"
-          onClick={(e) => {
-            e.stopPropagation();
-            axios
-              .delete(`/api/posts/${post.id}`, {
-                headers: {
-                  Authorization: `Bearer ${getCookie("token")}`,
-                },
-              })
-              .then(() => {
-                alert("Post deleted successfully");
-                setPosts &&
-                  setPosts((posts) => posts.filter((p) => p.id !== post.id));
-              })
-              .catch((err) => {
-                alert("Error deleting post: " + err.response.data);
-              });
-          }}
-        >
-          Delete
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className="bg-red-500 text-white px-6 py-1 font-semibold rounded-md my-5 border border-red-500 hover:bg-transparent hover:text-red-500 transition-all duration-200 active:bg-transparent active:text-red-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              axios
+                .delete(`/api/posts/${post.id}`, {
+                  headers: {
+                    Authorization: `Bearer ${getCookie("token")}`,
+                  },
+                })
+                .then(() => {
+                  alert("Post deleted successfully");
+                  setPosts &&
+                    setPosts((posts) => posts.filter((p) => p.id !== post.id));
+                })
+                .catch((err) => {
+                  alert("Error deleting post: " + err.response.data);
+                });
+            }}
+          >
+            Delete
+          </button>
+          <button
+            className="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/post/edit/${post.id}`);
+            }}
+          >
+            Edit
+          </button>
+        </div>
       )}
     </motion.div>
   );

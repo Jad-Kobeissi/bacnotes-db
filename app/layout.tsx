@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BacNotes",
+  title: "BacConnect",
   description: "A platform to share and discover notes for BAC students.",
 };
 

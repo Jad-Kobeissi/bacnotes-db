@@ -3,6 +3,7 @@ import { storage } from "@/lib/firebase";
 import { prisma } from "@/lib/prisma";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { decode, verify } from "jsonwebtoken";
+import sharp from "sharp";
 
 export async function GET(req: Request) {
   try {
@@ -84,16 +85,20 @@ export async function POST(req: Request) {
     // Upload files first in parallel
     const imageUrls = await Promise.all(
       files.map(async (file) => {
-        if (file.size > 10 * 1024 * 1024) {
-          throw new Error("Image too large");
-        }
+        const buffer = Buffer.from(await file.arrayBuffer());
+
+        // Process image with sharp: resize to 800px width and set quality
+        const compressedImageBuffer = await sharp(buffer)
+          .resize(800)
+          .webp({ quality: 80 }) // Convert to WebP with 80% quality
+          .toBuffer();
 
         const imageRef = ref(
           storage,
           `${process.env.postsBucket}/${crypto.randomUUID()}`,
         );
 
-        await uploadBytes(imageRef, file);
+        await uploadBytes(imageRef, compressedImageBuffer);
         return await getDownloadURL(imageRef);
       }),
     );

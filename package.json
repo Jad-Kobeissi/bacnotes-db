@@ -22,7 +22,8 @@
     "react-dom": "19.2.3",
     "react-infinite-scroll": "^0.1.5",
     "react-infinite-scroll-component": "^6.1.1",
-    "react-intersection-observer": "^10.0.2"
+    "react-intersection-observer": "^10.0.2",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
