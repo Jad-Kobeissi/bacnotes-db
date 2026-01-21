@@ -1,12 +1,6 @@
 import { TJWT } from "@/app/types";
-import { storage } from "@/lib/firebase";
 import { prisma } from "@/lib/prisma";
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+import { del, put } from "@vercel/blob";
 import { decode, verify } from "jsonwebtoken";
 import sharp from "sharp";
 
@@ -102,8 +96,7 @@ export async function PUT(
 
     if (files.length > 0) {
       await post.imageUrls.forEach(async (url) => {
-        const imageRef = ref(storage, url);
-        await deleteObject(imageRef);
+        await del(url);
       });
 
       imageUrls = await Promise.all(
@@ -114,14 +107,15 @@ export async function PUT(
             .resize(800)
             .webp({ quality: 80 })
             .toBuffer();
-          const storageRef = ref(
-            storage,
+          const blob = await put(
             `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}`,
+            compressedImageBuffer,
+            {
+              access: "public",
+            },
           );
 
-          await uploadBytes(storageRef, compressedImageBuffer);
-
-          return await getDownloadURL(storageRef);
+          return blob.url;
         }),
       );
     }

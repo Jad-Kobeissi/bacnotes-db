@@ -1,7 +1,6 @@
 import { TJWT, TPost } from "@/app/types";
-import { storage } from "@/lib/firebase";
+import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { decode, verify } from "jsonwebtoken";
 import sharp from "sharp";
 
@@ -63,7 +62,7 @@ export async function POST(req: Request) {
     if (!authHeader || !verify(authHeader, process.env.JWT_SECRET!))
       return new Response("Unauthorized", { status: 401 });
 
-    const decoded = decode(authHeader) as TJWT;
+    const decoded = decode(authHeader) as { id: string };
 
     // Verify user exists in database
     const userExists = await prisma.user.findUnique({
@@ -77,32 +76,33 @@ export async function POST(req: Request) {
     }
 
     const formData = await req.formData();
-
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
     const files = formData.getAll("files") as File[];
 
-    // Upload files first in parallel
+    // Upload files in parallel to Vercel Blob
     const imageUrls = await Promise.all(
       files.map(async (file) => {
         const buffer = Buffer.from(await file.arrayBuffer());
 
-        // Process image with sharp: resize to 800px width and set quality
+        // Resize and convert with sharp
         const compressedImageBuffer = await sharp(buffer)
           .resize(800)
-          .webp({ quality: 80 }) // Convert to WebP with 80% quality
+          .webp({ quality: 80 })
           .toBuffer();
 
-        const imageRef = ref(
-          storage,
-          `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}`,
-        );
+        // Use folder-like path in Blob
+        const blobName = `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}.webp`;
 
-        await uploadBytes(imageRef, compressedImageBuffer);
-        return await getDownloadURL(imageRef);
+        const blob = await put(blobName, compressedImageBuffer, {
+          access: "public",
+        });
+
+        return blob.url;
       }),
     );
 
+    // Save post in DB
     const post = await prisma.post.create({
       data: {
         title,
@@ -112,8 +112,11 @@ export async function POST(req: Request) {
       },
     });
 
-    return Response.json(post);
+    return new Response(JSON.stringify(post), { status: 200 });
   } catch (error: any) {
-    return new Response(error, { status: 500 });
+    console.error(error);
+    return new Response(error?.message || "Internal Server Error", {
+      status: 500,
+    });
   }
 }
