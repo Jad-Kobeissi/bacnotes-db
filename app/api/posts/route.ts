@@ -95,7 +95,7 @@ export async function POST(req: Request) {
 
         const imageRef = ref(
           storage,
-          `${process.env.postsBucket}/${crypto.randomUUID()}`,
+          `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}`,
         );
 
         await uploadBytes(imageRef, compressedImageBuffer);
