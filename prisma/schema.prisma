@@ -21,6 +21,8 @@ model User {
   posts Post[]
   viewedPosts Post[]   @relation("ViewedPosts")
   likedPosts Post[]   @relation("LikedPosts")
+  followers User[] @relation("UserFollows")
+  following User[] @relation("UserFollows")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

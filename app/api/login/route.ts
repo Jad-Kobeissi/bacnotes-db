@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     try {
       const loginAttempt = await axios.post(
         `https://sisapi.bac.edu.lb/api/login`,
-        { identifier, password }
+        { identifier, password },
       );
       if (!loginAttempt.data.success)
         return new Response("Invalid credentials", { status: 401 });
@@ -29,6 +29,10 @@ export async function POST(req: Request) {
       },
       include: {
         posts: true,
+        likedPosts: true,
+        viewedPosts: true,
+        followers: true,
+        following: true,
       },
     });
 
@@ -36,7 +40,7 @@ export async function POST(req: Request) {
 
     const customToken = await sign(
       { id: user.id, username, name: user.name },
-      process.env.JWT_SECRET!
+      process.env.JWT_SECRET!,
     );
 
     return Response.json({ customToken, token, user });

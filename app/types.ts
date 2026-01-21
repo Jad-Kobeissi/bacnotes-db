@@ -12,6 +12,8 @@ export interface TUser {
   posts: TPost[];
   viewedPosts: TPost[];
   likedPosts: TPost[];
+  followers: TUser[];
+  following: TUser[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +26,7 @@ export interface TPost {
   viewedUsers: TUser[];
   likedUsers: TUser[];
   likes: number;
+  imageUrls: string[];
   createdAt: Date;
   updatedAt: Date;
 }

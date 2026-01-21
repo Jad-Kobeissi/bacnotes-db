@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     // Upload files first in parallel
     const imageUrls = await Promise.all(
       files.map(async (file) => {
-        if (file.size > 5 * 1024 * 1024) {
+        if (file.size > 10 * 1024 * 1024) {
           throw new Error("Image too large");
         }
 

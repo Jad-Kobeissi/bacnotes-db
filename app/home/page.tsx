@@ -7,6 +7,8 @@ import axios from "axios";
 import { getCookie } from "cookies-next";
 import Nav from "../Nav";
 import Error from "../Error";
+import Post from "../Post";
+import Loading from "../LoadingComp";
 
 export default function Home() {
   const { user } = useUser();
@@ -106,25 +108,27 @@ export default function Home() {
               content.current!.style.height = e.target.scrollHeight + "px";
             }}
           />
-          {files.map((file, index) => (
-            <div
-              key={index}
-              className="flex gap-2 border border-(--border-color)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
-                fill="currentColor"
-                className="w-5 fill-black"
-                onClick={() => {
-                  setFiles(files.filter((f, i) => i !== index));
-                }}
+          <div className="flex flex-wrap gap-4">
+            {files.map((file, index) => (
+              <div
+                key={index}
+                className="flex gap-2 border border-(--border-color)"
               >
-                <path d="M504.6 148.5C515.9 134.9 514.1 114.7 500.5 103.4C486.9 92.1 466.7 93.9 455.4 107.5L320 270L184.6 107.5C173.3 93.9 153.1 92.1 139.5 103.4C125.9 114.7 124.1 134.9 135.4 148.5L278.3 320L135.4 491.5C124.1 505.1 125.9 525.3 139.5 536.6C153.1 547.9 173.3 546.1 184.6 532.5L320 370L455.4 532.5C466.7 546.1 486.9 547.9 500.5 536.6C514.1 525.3 515.9 505.1 504.6 491.5L361.7 320L504.6 148.5z" />
-              </svg>
-              <h1>{file.name}</h1>
-            </div>
-          ))}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640"
+                  fill="currentColor"
+                  className="w-5 fill-black"
+                  onClick={() => {
+                    setFiles(files.filter((f, i) => i !== index));
+                  }}
+                >
+                  <path d="M504.6 148.5C515.9 134.9 514.1 114.7 500.5 103.4C486.9 92.1 466.7 93.9 455.4 107.5L320 270L184.6 107.5C173.3 93.9 153.1 92.1 139.5 103.4C125.9 114.7 124.1 134.9 135.4 148.5L278.3 320L135.4 491.5C124.1 505.1 125.9 525.3 139.5 536.6C153.1 547.9 173.3 546.1 184.6 532.5L320 370L455.4 532.5C466.7 546.1 486.9 547.9 500.5 536.6C514.1 525.3 515.9 505.1 504.6 491.5L361.7 320L504.6 148.5z" />
+                </svg>
+                <h1>{file.name}</h1>
+              </div>
+            ))}
+          </div>
           <label htmlFor="file-upload">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -148,28 +152,18 @@ export default function Home() {
         </form>
         <InfiniteScroll
           dataLength={posts.length}
-          next={fetchPosts}
           hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
+          next={fetchPosts}
+          loader={
+            <Loading className="flex items-center justify-center mt-30 w-screen" />
+          }
+          className="w-3/4 mx-6 gap-8 flex flex-col "
         >
           {posts.map((post) => (
-            <div
-              key={post.id}
-              style={{
-                border: "1px solid black",
-                margin: "10px",
-                padding: "10px",
-              }}
-            >
-              <h2>{post.title}</h2>
-              <p>{post.content}</p>
-              <p>
-                <i>By {post.author.name}</i>
-              </p>
-            </div>
+            <Post post={post} key={post.id} />
           ))}
         </InfiniteScroll>
-        {error && <Error error={error} className="text-2xl mt-20" />}
+        {error && <Error error={error} className="mt-20 text-[1.3rem]" />}
       </div>
     </>
   );

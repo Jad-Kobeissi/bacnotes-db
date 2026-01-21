@@ -208,7 +208,7 @@ function Features() {
 function Footer() {
   const router = useRouter();
   return (
-    <footer className="bg-linear-to-r from-blue-600 to-pink-600 h-[50vh] w-screen text-white flex flex-col items-center justify-center gap-6">
+    <footer className="bg-linear-to-r from-blue-600 to-pink-600 h-[50vh] w-screen text-white flex flex-col items-center justify-center gap-6 text-center">
       <h1 className="text-[2rem] font-semibold">
         Ready To Join Your School Community?
       </h1>
