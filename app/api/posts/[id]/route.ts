@@ -55,6 +55,9 @@ export async function DELETE(
     if (post.authorId !== decoded.id)
       return new Response("Forbidden", { status: 403 });
 
+    await post.imageUrls.forEach(async (url) => {
+      await del(url);
+    });
     await prisma.post.delete({
       where: { id },
     });
