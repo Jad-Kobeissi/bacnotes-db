@@ -90,38 +90,7 @@ export async function PUT(
     if (post.authorId !== decoded.id)
       return new Response("Forbidden", { status: 403 });
 
-    const formData = await req.formData();
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
-    const files = formData.getAll("files") as File[];
-
-    let imageUrls: string[] = [];
-
-    if (files.length > 0) {
-      await post.imageUrls.forEach(async (url) => {
-        await del(url);
-      });
-
-      imageUrls = await Promise.all(
-        files.map(async (file) => {
-          const buffer = Buffer.from(await file.arrayBuffer());
-
-          const compressedImageBuffer = await sharp(buffer)
-            .resize(800)
-            .webp({ quality: 80 })
-            .toBuffer();
-          const blob = await put(
-            `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}`,
-            compressedImageBuffer,
-            {
-              access: "public",
-            },
-          );
-
-          return blob.url;
-        }),
-      );
-    }
+    const { title, content, files } = await req.json();
 
     await prisma.post.update({
       where: { id },
@@ -132,7 +101,7 @@ export async function PUT(
           content && content !== "" && content !== post.content
             ? content
             : post.content,
-        imageUrls: imageUrls.length > 0 ? imageUrls : post.imageUrls,
+        imageUrls: files && files.length > 0 ? files : post.imageUrls,
       },
     });
 

@@ -1,5 +1,4 @@
 import { TJWT, TPost } from "@/app/types";
-import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { decode, verify } from "jsonwebtoken";
 import sharp from "sharp";

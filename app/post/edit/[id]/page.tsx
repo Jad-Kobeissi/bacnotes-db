@@ -3,6 +3,7 @@ import Error from "@/app/Error";
 import Loading from "@/app/LoadingComp";
 import Nav from "@/app/Nav";
 import { TPost } from "@/app/types";
+import { put } from "@vercel/blob";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
@@ -50,18 +51,32 @@ export default function EditPost({
         onSubmit={(e) => {
           e.preventDefault();
           setLoading(true);
-          const formData = new FormData();
-          formData.append("title", title);
-          formData.append("content", content);
-          Array.from(files.current?.files || []).forEach((file) => {
-            formData.append("files", file);
+          let imageUrls: string[] = [];
+          Array.from(files.current?.files || []).forEach(async (file) => {
+            const blob = await put(
+              `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
+              file,
+              {
+                access: "public",
+              },
+            );
+
+            imageUrls.push(blob.url);
           });
           axios
-            .put(`/api/posts/${id}`, formData, {
-              headers: {
-                Authorization: `Bearer ${getCookie("token")}`,
+            .put(
+              `/api/posts/${id}`,
+              {
+                title,
+                content,
+                files: imageUrls,
               },
-            })
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie("token")}`,
+                },
+              },
+            )
             .then((res) => {
               alert("Post updated");
               router.push(`/post/${id}`);
