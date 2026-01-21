@@ -66,19 +66,22 @@ export default function Home() {
             e.preventDefault();
             if (postButtonDisabled) return;
             setPostButtonDisabled(true);
-            let imageUrls: string[] = [];
-            await files.forEach(async (file) => {
-              const blob = await put(
-                `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
-                file,
-                {
-                  access: "public",
-                },
+
+            try {
+              const imageUrls = await Promise.all(
+                files.map(async (file) => {
+                  const blob = await put(
+                    `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
+                    file,
+                    {
+                      access: "public",
+                    },
+                  );
+                  return blob.url; // push URL, not file
+                }),
               );
-              imageUrls.push(blob.url);
-            });
-            axios
-              .post(
+
+              await axios.post(
                 `/api/posts`,
                 {
                   title: title.current!.value,
@@ -90,21 +93,21 @@ export default function Home() {
                     Authorization: `Bearer ${getCookie("token")}`,
                   },
                 },
-              )
-              .then((res) => {
-                if (title.current) title.current.value = "";
-                if (content.current) content.current.value = "";
-                setFiles([]);
-                alert("Posted!");
-              })
-              .catch((err) => {
-                alert(
-                  "There was an error posting: " +
-                    (err.response?.data || "An error occurred"),
-                );
-                console.log(err);
-              })
-              .finally(() => setPostButtonDisabled(false));
+              );
+
+              if (title.current) title.current.value = "";
+              if (content.current) content.current.value = "";
+              setFiles([]);
+              alert("Posted!");
+            } catch (err: any) {
+              alert(
+                "There was an error posting: " +
+                  (err.response?.data || err.message),
+              );
+              console.error(err);
+            } finally {
+              setPostButtonDisabled(false);
+            }
           }}
           className="w-3/4 mx-6 my-4 gap-3 flex flex-col"
         >
