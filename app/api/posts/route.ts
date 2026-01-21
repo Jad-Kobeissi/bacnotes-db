@@ -75,40 +75,14 @@ export async function POST(req: Request) {
       });
     }
 
-    const formData = await req.formData();
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
-    const files = formData.getAll("files") as File[];
+    const { title, content, files } = await req.json();
 
-    // Upload files in parallel to Vercel Blob
-    const imageUrls = await Promise.all(
-      files.map(async (file) => {
-        const buffer = Buffer.from(await file.arrayBuffer());
-
-        // Resize and convert with sharp
-        const compressedImageBuffer = await sharp(buffer)
-          .resize(800)
-          .webp({ quality: 80 })
-          .toBuffer();
-
-        // Use folder-like path in Blob
-        const blobName = `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}.webp`;
-
-        const blob = await put(blobName, compressedImageBuffer, {
-          access: "public",
-        });
-
-        return blob.url;
-      }),
-    );
-
-    // Save post in DB
     const post = await prisma.post.create({
       data: {
         title,
         content,
         authorId: decoded.id,
-        imageUrls,
+        imageUrls: files,
       },
     });
 

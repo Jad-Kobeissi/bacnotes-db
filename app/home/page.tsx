@@ -9,6 +9,7 @@ import Nav from "../Nav";
 import Error from "../Error";
 import Post from "../Post";
 import Loading from "../LoadingComp";
+import { put } from "@vercel/blob";
 
 export default function Home() {
   const { user } = useUser();
@@ -61,22 +62,35 @@ export default function Home() {
           Hello {user?.name?.split(" ")[0]}!
         </h1>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             if (postButtonDisabled) return;
             setPostButtonDisabled(true);
-            const formData = new FormData();
-            formData.append("title", title.current!.value);
-            formData.append("content", content.current!.value);
-            files.forEach((file) => {
-              formData.append("files", file);
+            let imageUrls: string[] = [];
+            await files.forEach(async (file) => {
+              const blob = await put(
+                `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
+                file,
+                {
+                  access: "public",
+                },
+              );
+              imageUrls.push(blob.url);
             });
             axios
-              .post(`/api/posts`, formData, {
-                headers: {
-                  Authorization: `Bearer ${getCookie("token")}`,
+              .post(
+                `/api/posts`,
+                {
+                  title: title.current!.value,
+                  content: content.current!.value,
+                  files: imageUrls,
                 },
-              })
+                {
+                  headers: {
+                    Authorization: `Bearer ${getCookie("token")}`,
+                  },
+                },
+              )
               .then((res) => {
                 if (title.current) title.current.value = "";
                 if (content.current) content.current.value = "";
