@@ -70,7 +70,7 @@ export default function Profile() {
         className="w-3/4 mx-6 gap-8 flex flex-col "
       >
         {posts.map((post) => (
-          <Post post={post} key={post.id} />
+          <Post post={post} key={post.id} setPosts={setPosts} />
         ))}
       </InfiniteScroll>
       {error && <Error error={error} className="mt-20 text-[1.3rem]" />}

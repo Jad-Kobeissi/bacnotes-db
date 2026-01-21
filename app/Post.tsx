@@ -2,9 +2,20 @@
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { TPost } from "./types";
+import { useUser } from "./contexts/UserContext";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { Dispatch, SetStateAction } from "react";
 
-export default function Post({ post }: { post: TPost }) {
+export default function Post({
+  post,
+  setPosts,
+}: {
+  post: TPost;
+  setPosts?: Dispatch<SetStateAction<TPost[]>>;
+}) {
   const router = useRouter();
+  const { user } = useUser();
   return (
     <motion.div
       whileHover={{ scale: 1.01 }}
@@ -30,6 +41,30 @@ export default function Post({ post }: { post: TPost }) {
           />
         ))}
       </div>
+      {post.authorId == user?.id && (
+        <button
+          className="bg-red-500 text-white px-6 py-1 font-semibold rounded-md my-5 border border-red-500 hover:bg-transparent hover:text-red-500 transition-all duration-200 active:bg-transparent active:text-red-500"
+          onClick={(e) => {
+            e.stopPropagation();
+            axios
+              .delete(`/api/posts/${post.id}`, {
+                headers: {
+                  Authorization: `Bearer ${getCookie("token")}`,
+                },
+              })
+              .then(() => {
+                alert("Post deleted successfully");
+                setPosts &&
+                  setPosts((posts) => posts.filter((p) => p.id !== post.id));
+              })
+              .catch((err) => {
+                alert("Error deleting post: " + err.response.data);
+              });
+          }}
+        >
+          Delete
+        </button>
+      )}
     </motion.div>
   );
 }
