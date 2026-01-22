@@ -11,6 +11,7 @@ import Error from "../Error";
 import Post from "../Post";
 import Loading from "../LoadingComp";
 import { put } from "@vercel/blob";
+import { upload } from "@vercel/blob/client";
 
 export default function Home() {
   const { user } = useUser();
@@ -78,14 +79,15 @@ export default function Home() {
                     fileType: "image/webp",
                     initialQuality: 0.8,
                   });
-                  const blob = await put(
+                  const blob = await upload(
                     `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
                     compressed,
                     {
                       access: "public",
+                      handleUploadUrl: "/api/blob",
                     },
                   );
-                  return blob.url; // push URL, not file
+                  return blob.url;
                 }),
               );
 
