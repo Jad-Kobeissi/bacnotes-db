@@ -12,6 +12,8 @@ import Post from "../Post";
 import Loading from "../LoadingComp";
 import { put } from "@vercel/blob";
 import { upload } from "@vercel/blob/client";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 
 export default function Home() {
   const { user } = useUser();
@@ -79,15 +81,13 @@ export default function Home() {
                     fileType: "image/webp",
                     initialQuality: 0.8,
                   });
-                  const blob = await upload(
-                    `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
-                    compressed,
-                    {
-                      access: "public",
-                      handleUploadUrl: "/api/blob",
-                    },
+                  const imageRef = ref(
+                    storage,
+                    `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}`,
                   );
-                  return blob.url;
+
+                  await uploadBytes(imageRef, compressed);
+                  return await getDownloadURL(imageRef);
                 }),
               );
 

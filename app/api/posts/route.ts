@@ -63,7 +63,6 @@ export async function POST(req: Request) {
 
     const decoded = decode(authHeader) as { id: string };
 
-    // Verify user exists in database
     const userExists = await prisma.user.findUnique({
       where: { id: decoded.id },
     });
