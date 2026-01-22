@@ -1,4 +1,5 @@
 "use client";
+import imageCompression from "browser-image-compression";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "../contexts/UserContext";
@@ -10,7 +11,6 @@ import Error from "../Error";
 import Post from "../Post";
 import Loading from "../LoadingComp";
 import { put } from "@vercel/blob";
-import sharp from "sharp";
 
 export default function Home() {
   const { user } = useUser();
@@ -71,11 +71,13 @@ export default function Home() {
             try {
               const imageUrls = await Promise.all(
                 files.map(async (file) => {
-                  const buffer = Buffer.from(await file.arrayBuffer());
-
-                  const compressed = await sharp(buffer)
-                    .webp({ quality: 80 })
-                    .toBuffer();
+                  const compressed = await imageCompression(file, {
+                    maxSizeMB: 1.5,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true,
+                    fileType: "image/webp",
+                    initialQuality: 0.8,
+                  });
                   const blob = await put(
                     `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
                     compressed,
