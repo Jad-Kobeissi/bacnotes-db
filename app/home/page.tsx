@@ -10,6 +10,7 @@ import Error from "../Error";
 import Post from "../Post";
 import Loading from "../LoadingComp";
 import { put } from "@vercel/blob";
+import sharp from "sharp";
 
 export default function Home() {
   const { user } = useUser();
@@ -70,9 +71,14 @@ export default function Home() {
             try {
               const imageUrls = await Promise.all(
                 files.map(async (file) => {
+                  const buffer = Buffer.from(await file.arrayBuffer());
+
+                  const compressed = await sharp(buffer)
+                    .webp({ quality: 80 })
+                    .toBuffer();
                   const blob = await put(
                     `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
-                    file,
+                    compressed,
                     {
                       access: "public",
                     },
