@@ -3,9 +3,11 @@ import Error from "@/app/Error";
 import Loading from "@/app/LoadingComp";
 import Nav from "@/app/Nav";
 import { TPost } from "@/app/types";
+import { storage } from "@/lib/firebase";
 import { put } from "@vercel/blob";
 import axios from "axios";
 import { getCookie } from "cookies-next";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -53,15 +55,13 @@ export default function EditPost({
           setLoading(true);
           let imageUrls: string[] = [];
           Array.from(files.current?.files || []).forEach(async (file) => {
-            const blob = await put(
-              `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}-${file.name}`,
-              file,
-              {
-                access: "public",
-              },
+            const imageRef = ref(
+              storage,
+              `${process.env.NEXT_PUBLIC_POSTS_BUCKET}/${crypto.randomUUID()}`,
             );
-
-            imageUrls.push(blob.url);
+            await uploadBytes(imageRef, file);
+            const url = await getDownloadURL(imageRef);
+            imageUrls.push(url);
           });
           axios
             .put(

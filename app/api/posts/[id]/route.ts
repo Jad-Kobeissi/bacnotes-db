@@ -1,6 +1,8 @@
 import { TJWT } from "@/app/types";
+import { storage } from "@/lib/firebase";
 import { prisma } from "@/lib/prisma";
 import { del, put } from "@vercel/blob";
+import { deleteObject, ref } from "firebase/storage";
 import { decode, verify } from "jsonwebtoken";
 import sharp from "sharp";
 
@@ -56,7 +58,9 @@ export async function DELETE(
       return new Response("Forbidden", { status: 403 });
 
     await post.imageUrls.forEach(async (url) => {
-      await del(url);
+      const imageRef = ref(storage, url);
+
+      await deleteObject(imageRef);
     });
     await prisma.post.delete({
       where: { id },
