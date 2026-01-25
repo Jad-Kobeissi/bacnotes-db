@@ -68,6 +68,13 @@ export default function EditNote({
             setLoading(true);
             let imageUrls: string[] = note?.imageUrls || [];
             if ((files.current?.files?.length || 0) > 0) {
+              await Promise.all(
+                (note?.imageUrls || []).map(async (url: string) => {
+                  const imageRef = ref(storage, url);
+
+                  await deleteObject(imageRef);
+                }),
+              );
               imageUrls = await Promise.all(
                 Array.from(files.current?.files || []).map(async (file) => {
                   const imageRef = ref(
@@ -86,13 +93,6 @@ export default function EditNote({
                   await uploadBytes(imageRef, compressedImage);
 
                   return await getDownloadURL(imageRef);
-                }),
-              );
-              await Promise.all(
-                (note?.imageUrls || []).map(async (url: string) => {
-                  const imageRef = ref(storage, url);
-
-                  await deleteObject(imageRef);
                 }),
               );
             }
