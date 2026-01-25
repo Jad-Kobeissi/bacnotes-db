@@ -17,7 +17,6 @@ export default function AgendaPage() {
   const router = useRouter();
   const fetchAgenda = async (week: string) => {
     setLoading(true);
-    alert("running");
     await axios
       .get(`/api/agenda?week=${week}`, {
         headers: {
@@ -76,7 +75,6 @@ export default function AgendaPage() {
           <select
             className="input"
             onChange={(e) => {
-              alert(e.target.value);
               setWeek(e.target.value);
             }}
             value={week}
