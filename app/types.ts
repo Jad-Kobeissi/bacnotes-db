@@ -30,3 +30,16 @@ export interface TPost {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface TNote {
+  id: string;
+  title: string;
+  content: string;
+  imageUrls: string[];
+  subject: string;
+  author: TUser;
+  authorId: String;
+  likes: Number;
+  likedUsers: TUser[];
+  createdAt: Date;
+  updatedAt: Date;
+}

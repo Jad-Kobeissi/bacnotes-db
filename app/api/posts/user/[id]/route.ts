@@ -2,7 +2,10 @@ import { TJWT } from "@/app/types";
 import { prisma } from "@/lib/prisma";
 import { decode, verify } from "jsonwebtoken";
 
-export async function GET(req: Request) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     const authHeader = req.headers.get("Authorization")?.split(" ")[1];
 
@@ -11,13 +14,14 @@ export async function GET(req: Request) {
 
     const decoded = decode(authHeader) as TJWT;
 
+    const { id } = await params;
     const url = new URL(req.url);
     const page = parseInt(url.searchParams.get("page") || "1");
     const limit = 5;
     const skip = (page - 1) * limit;
     const posts = await prisma.post.findMany({
       where: {
-        authorId: decoded.id,
+        authorId: id,
       },
       include: {
         author: true,

@@ -1,39 +1,43 @@
 "use client";
 import { motion } from "motion/react";
-import { useUser } from "../contexts/UserContext";
-import Loading from "../LoadingComp";
-import Nav from "../Nav";
+import { useUser } from "../../contexts/UserContext";
+import Loading from "../../LoadingComp";
+import Nav from "../../Nav";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getCookie } from "cookies-next";
-import { TPost } from "../types";
+import { TNote, TPost } from "../../types";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Post from "../Post";
-import Error from "../Error";
+import Post from "../../Post";
+import Error from "../../Error";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Note from "@/app/Note";
 
 export default function Profile() {
   const { user } = useUser();
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
-  const [posts, setPosts] = useState<TPost[]>([]);
+  const [notes, setNotes] = useState<TNote[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const fetchPosts = () => {
+  const router = useRouter();
+  const fetchNotes = () => {
+    console.log(user);
     axios
-      .get(`/api/posts/user/${user?.id}?page=${page}`, {
+      .get(`/api/notes/user/${user?.id}?page=${page}`, {
         headers: {
           Authorization: `Bearer ${getCookie("token")}`,
         },
       })
       .then((res) => {
-        setPosts((prev) => {
-          const unfilteredPosts = [...prev, ...res.data];
+        setNotes((prev) => {
+          const unfilteredNotes = [...prev, ...res.data];
 
-          const filteredPosts = new Map(
-            unfilteredPosts.map((u) => [u.id, u]),
+          const filteredNotes = new Map(
+            unfilteredNotes.map((u) => [u.id, u]),
           ).values();
 
-          return Array.from(filteredPosts);
+          return Array.from(filteredNotes);
         });
         setPage((prev) => prev + 1);
       })
@@ -43,7 +47,7 @@ export default function Profile() {
       });
   };
   useEffect(() => {
-    fetchPosts();
+    fetchNotes();
   }, []);
   return !user ? (
     <Loading className="flex items-center justify-center h-screen" />
@@ -62,22 +66,22 @@ export default function Profile() {
         </div>
       </div>
       <div className="text-[1.2rem] flex gap-4 items-center justify-center">
-        <Link href={`/profile`}>Posts</Link>
-        <Link href={`/profile/notes`} className="text-(--secondary-text)">
-          Notes
+        <Link href={`/profile`} className="text-(--secondary-text)">
+          Posts
         </Link>
+        <Link href={`/profile/notes`}>Notes</Link>
       </div>
       <InfiniteScroll
-        dataLength={posts.length}
+        dataLength={notes.length}
         hasMore={hasMore}
-        next={fetchPosts}
+        next={fetchNotes}
         loader={
           <Loading className="flex items-center justify-center mt-30 w-screen" />
         }
         className="w-3/4 mx-6 gap-8 flex flex-col "
       >
-        {posts.map((post) => (
-          <Post post={post} key={post.id} setPosts={setPosts} />
+        {notes.map((note) => (
+          <Note key={note.id as string} note={note} setNotes={setNotes} />
         ))}
       </InfiniteScroll>
       {error && <Error error={error} className="mt-20 text-[1.3rem]" />}

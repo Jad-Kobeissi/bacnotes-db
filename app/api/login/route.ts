@@ -45,6 +45,6 @@ export async function POST(req: Request) {
 
     return Response.json({ customToken, token, user });
   } catch (error: any) {
-    return new Response(error.response.data, { status: 500 });
+    return new Response(error, { status: 500 });
   }
 }

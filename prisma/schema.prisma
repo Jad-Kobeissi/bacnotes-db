@@ -12,7 +12,20 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
+enum Subject {
+  ENGLISH
+  ARABIC
+  FRENCH
+  MATH
+  BIOLOGY
+  PHYSICS
+  CHEMISTRY
+  GEOGRAPHY
+  HISTORY
+  CIVICS
+  PHILOSOPHY
+  ECONOMICS
+}
 model User {
   id        String   @id @default(cuid())
   username     String   @unique
@@ -23,6 +36,8 @@ model User {
   likedPosts Post[]   @relation("LikedPosts")
   followers User[] @relation("UserFollows")
   following User[] @relation("UserFollows")
+  notes Note[] @relation("notes")
+  likedNotes Note[] @relation("likedUsers")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -36,6 +51,19 @@ model Post {
   likedUsers User[]   @relation("LikedPosts")
   likes Int @default(0)
   imageUrls String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Note {
+  id String @id @default(cuid())
+  title String 
+  content String
+  imageUrls String[]
+  subject Subject
+  author User @relation(fields: [authorId], references: [id], "notes")
+  authorId String
+  likes Int @default(0)
+  likedUsers User[] @relation("likedUsers")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -10,6 +10,7 @@ export default function Nav() {
       <h1 className="text-[1.3rem] font-medium">BacConnect</h1>
       <div className="flex gap-3">
         <Link href={"/home"}>Home</Link>
+        <Link href={"/notes"}>Notes</Link>
         <Link href={"/profile"}>Profile</Link>
         <button
           onClick={() => {

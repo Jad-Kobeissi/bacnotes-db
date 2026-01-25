@@ -16,7 +16,13 @@ export interface TUserContext {
 export const userContext = createContext<TUserContext | null>(null);
 
 export default function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUserState] = useState<TUser | null>(null);
+  const [user, setUserState] = useState<TUser | null>(() => {
+    if (typeof window === "undefined") return null;
+    const userStorage = sessionStorage.getItem("user") as string;
+    if (!userStorage) return null;
+
+    return JSON.parse(userStorage);
+  });
   const setUser = (user: TUser | null) => {
     setUserState(user);
     sessionStorage.setItem("user", JSON.stringify(user));
@@ -25,10 +31,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     setUserState(null);
     sessionStorage.clear();
   };
-  useEffect(() => {
-    const userStorage = JSON.parse(sessionStorage.getItem("user") as string);
-    if (userStorage) setUserState(userStorage);
-  }, []);
+  useEffect(() => {}, []);
   return (
     <userContext.Provider value={{ user, setUser, logout }}>
       {children}
