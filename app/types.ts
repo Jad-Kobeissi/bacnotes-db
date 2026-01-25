@@ -2,6 +2,7 @@ export interface TJWT {
   id: string;
   username: string;
   name: string;
+  BACId: string;
 }
 
 export interface TUser {
@@ -42,4 +43,10 @@ export interface TNote {
   likedUsers: TUser[];
   createdAt: Date;
   updatedAt: Date;
+}
+export interface TAgendaItem {
+  agendaId: Number;
+  description: String;
+  subject: String;
+  updated_at: Date;
 }

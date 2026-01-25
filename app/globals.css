@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -33,4 +36,16 @@ body {
 }
 .input {
   @apply border border-(--border-color) px-4 py-1 rounded-md;
+}
+.aiSummary {
+  @apply border border-(--border-color) p-4 rounded-md  mb-4;
+}
+.aiDay {
+  @apply mb-4 text-(--brand);
+}
+.aiSubject {
+  @apply text-[1.25rem] font-medium mb-2 text-(--brand);
+}
+.aiStudyTip {
+  @apply text-[1rem] text-(--secondary-text);
 }

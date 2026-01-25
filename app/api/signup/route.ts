@@ -26,6 +26,7 @@ export async function POST(req: Request) {
         username,
         name,
         class: learner.class.split(" ")[0],
+        BACId: learner.id,
       },
       include: {
         posts: true,
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
     });
 
     const token = await sign(
-      { id: user.id, username: user.username, name },
+      { id: user.id, username: user.username, name, BACId: user.BACId },
       process.env.JWT_SECRET as string,
     );
 

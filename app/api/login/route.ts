@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     if (!user) return new Response("Invalid credentials", { status: 401 });
 
     const customToken = await sign(
-      { id: user.id, username, name: user.name },
+      { id: user.id, username, name: user.name, BACId: user.BACId },
       process.env.JWT_SECRET!,
     );
 
