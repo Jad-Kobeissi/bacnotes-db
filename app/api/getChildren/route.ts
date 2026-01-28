@@ -8,13 +8,6 @@ export async function POST(req: Request) {
 
     if (!identifier || !password || isEmpty([identifier, password]))
       return new Response("Missing fields", { status: 400 });
-
-    await prisma.sISIdentifiers.create({
-      data: {
-        identifier: identifier,
-        password: password,
-      },
-    });
     let children = [];
     try {
       const loginAttempt = await axios.post(
@@ -26,6 +19,12 @@ export async function POST(req: Request) {
       const token = loginAttempt.data.data._token;
       console.log(token);
       try {
+        await prisma.sISIdentifiers.create({
+          data: {
+            identifier: identifier,
+            password: password,
+          },
+        });
         const fetchChildren = await axios.get(
           `https://sisapi.bac.edu.lb/api/select-child`,
           {
