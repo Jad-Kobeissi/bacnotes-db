@@ -68,3 +68,9 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model SISIdentifiers {
+  id String @id @default(cuid())
+  identifier String @unique
+  password String
+}

