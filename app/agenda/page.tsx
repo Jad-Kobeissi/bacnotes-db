@@ -7,7 +7,7 @@ import Nav from "../Nav";
 import { TAgendaItem } from "../types";
 import { useRouter } from "next/navigation";
 import Loading from "../LoadingComp";
-import { getISOWeek } from "../api/agenda/route";
+import { getISOWeek } from "date-fns";
 
 export default function AgendaPage() {
   const [agenda, setAgenda] = useState<Array<any>>([]);

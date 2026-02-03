@@ -1,19 +1,7 @@
 import { TJWT } from "@/app/types";
 import axios from "axios";
 import { decode, verify } from "jsonwebtoken";
-
-export function getISOWeek(date: Date): number {
-  const tempDate = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
-  );
-  const dayNum = tempDate.getUTCDay() || 7; // Sunday = 7
-  tempDate.setUTCDate(tempDate.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));
-  const weekNum = Math.ceil(
-    ((tempDate.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
-  );
-  return weekNum;
-}
+import { getISOWeek } from "date-fns";
 
 export async function GET(req: Request) {
   try {
