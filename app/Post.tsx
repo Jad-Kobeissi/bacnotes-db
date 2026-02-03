@@ -10,21 +10,29 @@ import { Dispatch, SetStateAction } from "react";
 export default function Post({
   post,
   setPosts,
+  className,
 }: {
   post: TPost;
   setPosts?: Dispatch<SetStateAction<TPost[]>>;
+  className?: string;
 }) {
   const router = useRouter();
   const { user } = useUser();
   return (
     <motion.div
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.95 }}
       key={post.id}
       onClick={() => router.push(`/post/${post.id}`)}
-      className="border border-(--border-color) px-5 py-3 rounded-md w-full"
+      className={`border border-(--border-color) px-5 py-3 rounded-md  ${className}`}
     >
-      <h1 className="text-[1.2rem] capitalize">{post.author.name}</h1>
+      <motion.h1
+        className="text-[1.2rem] capitalize underline"
+        onClick={(e) => {
+          e.stopPropagation();
+          router.push(`/user/${post.authorId}`);
+        }}
+      >
+        {post.author.name}
+      </motion.h1>
       <h1 className="text-[1.5rem] font-semibold">{post.title}</h1>
       <p className="text-(--secondary-text)">{post.content}</p>
       <div className="flex overflow-x-auto snap-x snap-mandatory max-w-[550px] w-full">

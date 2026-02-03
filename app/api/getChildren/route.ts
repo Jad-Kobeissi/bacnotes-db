@@ -18,13 +18,18 @@ export async function POST(req: Request) {
         return new Response("Invalid credentials", { status: 401 });
       const token = loginAttempt.data.data._token;
       console.log(token);
+      const studentExists = await prisma.sISIdentifiers.findUnique({
+        where: { identifier: identifier },
+      });
       try {
-        await prisma.sISIdentifiers.create({
-          data: {
-            identifier: identifier,
-            password: password,
-          },
-        });
+        if (!studentExists) {
+          await prisma.sISIdentifiers.create({
+            data: {
+              identifier: identifier,
+              password: password,
+            },
+          });
+        }
         const fetchChildren = await axios.get(
           `https://sisapi.bac.edu.lb/api/select-child`,
           {

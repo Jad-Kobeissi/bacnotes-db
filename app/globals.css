@@ -8,7 +8,7 @@ html {
   --foreground: #171717;
   --brand: #2b76f0;
   --secondary-text: #797b81;
-  --border-color: #e5e7eb;
+  --border-color: #bbbbbb;
 }
 
 @theme inline {
