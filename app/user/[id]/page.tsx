@@ -8,6 +8,7 @@ import { use, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loading from "@/app/LoadingComp";
 import Post from "@/app/Post";
+import { useRouter } from "next/navigation";
 
 export default function User({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -17,6 +18,7 @@ export default function User({ params }: { params: Promise<{ id: string }> }) {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const router = useRouter();
   const fetchUser = () => {
     setLoading(true);
     axios
@@ -68,10 +70,18 @@ export default function User({ params }: { params: Promise<{ id: string }> }) {
       <div className="text-center my-30">
         <h1 className="text-[1.2rem] font-medium capitalize">{user?.name}</h1>
         <div className="text-(--secondary-text) flex gap-3 justify-center">
-          <motion.h1 whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+          <motion.h1
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => router.push(`/user/followers/${id}`)}
+          >
             Followers: {user?.followers.length}
           </motion.h1>
-          <motion.h1 whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+          <motion.h1
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => router.push(`/user/following/${id}`)}
+          >
             Following: {user?.following.length}
           </motion.h1>
         </div>

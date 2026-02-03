@@ -11,6 +11,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Post from "../Post";
 import Error from "../Error";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
   const { user } = useUser();
@@ -18,6 +19,7 @@ export default function Profile() {
   const [page, setPage] = useState(1);
   const [posts, setPosts] = useState<TPost[]>([]);
   const [hasMore, setHasMore] = useState(true);
+  const router = useRouter();
   const fetchPosts = () => {
     axios
       .get(`/api/posts/user/${user?.id}?page=${page}`, {
@@ -53,10 +55,18 @@ export default function Profile() {
       <div className="my-40 flex flex-col items-center justify-center">
         <h1 className="font-medium capitalize text-lg">{user?.name}</h1>
         <div className="flex gap-3 text-(--secondary-text)">
-          <motion.p whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}>
+          <motion.p
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => router.push(`/user/followers/${user.id}`)}
+          >
             Followers: {user.followers.length}
           </motion.p>
-          <motion.p whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}>
+          <motion.p
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => router.push(`/user/following/${user.id}`)}
+          >
             Following: {user.following.length}
           </motion.p>
         </div>
