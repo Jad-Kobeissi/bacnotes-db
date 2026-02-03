@@ -7,6 +7,7 @@ import Nav from "../Nav";
 import { TAgendaItem } from "../types";
 import { useRouter } from "next/navigation";
 import Loading from "../LoadingComp";
+import { getISOWeek } from "../api/agenda/route";
 
 export default function AgendaPage() {
   const [agenda, setAgenda] = useState<Array<any>>([]);
@@ -36,6 +37,7 @@ export default function AgendaPage() {
   const fetchAiResponse = async () => {
     if (!agenda || agenda.length == 0) return;
     setLoading(true);
+    console.log(getISOWeek(new Date()));
     await axios
       .post(
         `/api/agenda/summarize`,
@@ -79,10 +81,11 @@ export default function AgendaPage() {
             }}
             value={week}
           >
-            <option value="3">Last Week</option>
-            <option value="4">This Week</option>
-            <option value="5">Next Week</option>
-            <option value="6">2 Weeks From Now</option>
+            <option value="">Select value</option>
+            <option value={getISOWeek(new Date()) - 1}>Last Week</option>
+            <option value={getISOWeek(new Date())}>This Week</option>
+            <option value={getISOWeek(new Date()) + 1}>Next Week</option>
+            <option value={getISOWeek(new Date()) + 2}>2 Weeks From Now</option>
           </select>
         </div>
         {loading ? (
