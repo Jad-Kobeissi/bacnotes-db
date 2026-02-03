@@ -37,7 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Environment Varialbes
 
-JWT_SECRET="secret"
+JWT_SECRET
 DATABASE_URL
 NEXT_PUBLIC_POSTS_BUCKET="posts"
 NEXT_PUBLIC_NOTES_BUCKET="notes"

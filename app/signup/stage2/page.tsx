@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@/app/contexts/UserContext";
 import Loading from "@/app/LoadingComp";
 import axios from "axios";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
@@ -6,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function SecondStage() {
+  const { setUser } = useUser();
   const [learners, setLearners] = useState<Array<any>>([]);
   const [selectedLearner, setSelectedLearner] = useState<string>("");
   const [username, setUsername] = useState<any>();
@@ -26,7 +28,6 @@ export default function SecondStage() {
           setLoadnig(true);
           console.log(username);
           console.log(learners);
-
           axios
             .post(`/api/signup`, {
               username,
@@ -35,6 +36,7 @@ export default function SecondStage() {
             .then((res) => {
               setCookie("token", res.data.token);
               deleteCookie("children");
+              setUser(res.data.user);
               router.push("/home");
             })
             .catch((err) => {
