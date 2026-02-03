@@ -47,7 +47,7 @@ export default function PostComp({
   ) : (
     <>
       <Nav />
-      <div className="flex flex-col items-center justify-center h-screen border">
+      <div className="flex flex-col items-center justify-center h-screen mt-20">
         <h1 className="text-[1.2rem] capitalize">{post?.author.name}</h1>
         <h1 className="text-[1.5rem] font-semibold">{post?.title}</h1>
         <p className="text-(--secondary-text)">{post?.content}</p>

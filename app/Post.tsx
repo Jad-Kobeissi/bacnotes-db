@@ -33,7 +33,7 @@ export default function Post({
             key={index}
             alt={`Image ${index + 1}`}
             src={url}
-            className="object-contain rounded-md max-w-[500px]"
+            className="object-contain snap-center rounded-md max-w-[500px]"
             onClick={(e) => {
               e.stopPropagation();
               window.open(url, "_blank");
